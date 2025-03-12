@@ -1,0 +1,48 @@
+## Compiled binary files
+bin/
+obj/
+
+## User-specific files
+*.user
+*.vspscc
+*.vssscc
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.docstates
+
+## Visual Studio Code
+.vscode/
+*.code-workspace
+
+## ASP.NET & Blazor specific
+wwwroot/
+Properties/launchSettings.json
+
+## NuGet packages
+*.nupkg
+packages/
+project.lock.json
+project.assets.json
+
+## Entity Framework
+*.mdf
+*.ldf
+Migrations/
+
+## Log files
+*.log
+logs/
+
+## Environment & Secrets
+.env
+appsettings.Development.json
+secrets.json
+
+## Rider & JetBrains IDEs
+.idea/
+*.sln.iml
+
+## System files
+Thumbs.db
+Desktop.ini
