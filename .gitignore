@@ -1,6 +1,10 @@
 ## Compiled binary files
 bin/
 obj/
+../bin/
+../obj/
+
+obj/
 
 ## User-specific files
 *.user

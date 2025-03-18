@@ -1,0 +1,87 @@
+@page "/tasks/delete/{Id:int}"
+@inject ScheduleDay.Client.Services.TaskService TaskService
+@inject NavigationManager Navigation
+@attribute [Authorize]
+@using ScheduleDay.Shared.Models
+
+<HeadContent>
+    <PageTitle>Delete Task</PageTitle>
+    <meta name="description" content="Delete tasks from your to-do list." />
+    <meta name="keywords" content="delete task, remove task, to-do, productivity, task management" />
+</HeadContent>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-header">
+                    <h3 class="text-center">Confirm Delete</h3>
+                </div>
+                <div class="card-body">
+                    @if (task != null)
+                    {
+                        <p class="text-center">Are you sure you wish to delete the following task: "@task.Name"?</p>
+                        <dl class="row">
+                            <dt class="col-sm-3">Name</dt>
+                            <dd class="col-sm-9">@task.Name</dd>
+
+                            <dt class="col-sm-3">Description</dt>
+                            <dd class="col-sm-9">@task.Description</dd>
+
+                            <dt class="col-sm-3">Date</dt>
+                            <dd class="col-sm-9">@task.Date.ToShortDateString()</dd>
+
+                            <dt class="col-sm-3">Status</dt>
+                            <dd class="col-sm-9">@task.Status</dd>
+                        </dl>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-secondary" @onclick="Cancel">
+                                Cancel
+                            </button>
+                            <button class="btn btn-danger" @onclick="ConfirmDelete">
+                                Delete
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-center">Loading...</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private TaskItem? task;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load selected task
+        task = await TaskService.GetTaskById(Id);
+        if (task == null)
+        {
+            Navigation.NavigateTo("/tasks");
+        }
+    }
+
+    private async Task ConfirmDelete()
+    {
+        // Delete task and redirect to /tasks route
+        if (await TaskService.DeleteTask(Id))
+        {
+            Navigation.NavigateTo("/tasks");
+        }
+    }
+
+    private void Cancel()
+    {
+        // Redirect to /tasks route
+        Navigation.NavigateTo("/tasks");
+    }
+}

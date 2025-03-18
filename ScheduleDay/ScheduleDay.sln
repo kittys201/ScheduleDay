@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScheduleDay.Shared", "ScheduleDay.Shared\ScheduleDay.Shared.csproj", "{17AC66B7-1E7B-471F-8F2A-422D23A6734D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScheduleDay", "ScheduleDay\ScheduleDay.csproj", "{3125F9DD-7622-4FCB-A083-FDAF75EE86B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScheduleDay.Client", "ScheduleDay.Client\ScheduleDay.Client.csproj", "{42D4F693-C2BF-469E-8A67-3286F6321C1D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{17AC66B7-1E7B-471F-8F2A-422D23A6734D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17AC66B7-1E7B-471F-8F2A-422D23A6734D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17AC66B7-1E7B-471F-8F2A-422D23A6734D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17AC66B7-1E7B-471F-8F2A-422D23A6734D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3125F9DD-7622-4FCB-A083-FDAF75EE86B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3125F9DD-7622-4FCB-A083-FDAF75EE86B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3125F9DD-7622-4FCB-A083-FDAF75EE86B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3125F9DD-7622-4FCB-A083-FDAF75EE86B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42D4F693-C2BF-469E-8A67-3286F6321C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42D4F693-C2BF-469E-8A67-3286F6321C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42D4F693-C2BF-469E-8A67-3286F6321C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42D4F693-C2BF-469E-8A67-3286F6321C1D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

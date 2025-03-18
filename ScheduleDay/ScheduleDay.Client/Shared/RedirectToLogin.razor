@@ -1,0 +1,18 @@
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
+@code {
+    private AuthenticationState? authState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        
+        if (authState.User.Identity?.IsAuthenticated == false)
+        {
+            // Wait a few milliseconds before redirecting
+            await Task.Delay(500);
+            Navigation.NavigateTo("/login", true);
+        }
+    }
+}

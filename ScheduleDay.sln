@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScheduleDay", "ScheduleDay", "{CE138FF8-40F5-4876-B76E-49101E35C76A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScheduleDay", "ScheduleDay\ScheduleDay\ScheduleDay.csproj", "{E6C17E36-72FA-414E-95C0-E876F546B8B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScheduleDay.Client", "ScheduleDay\ScheduleDay.Client\ScheduleDay.Client.csproj", "{2E4DA784-8888-4A19-BBEA-8D31AB7269A4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6C17E36-72FA-414E-95C0-E876F546B8B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6C17E36-72FA-414E-95C0-E876F546B8B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6C17E36-72FA-414E-95C0-E876F546B8B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6C17E36-72FA-414E-95C0-E876F546B8B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E4DA784-8888-4A19-BBEA-8D31AB7269A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E4DA784-8888-4A19-BBEA-8D31AB7269A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E4DA784-8888-4A19-BBEA-8D31AB7269A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E4DA784-8888-4A19-BBEA-8D31AB7269A4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E6C17E36-72FA-414E-95C0-E876F546B8B7} = {CE138FF8-40F5-4876-B76E-49101E35C76A}
+		{2E4DA784-8888-4A19-BBEA-8D31AB7269A4} = {CE138FF8-40F5-4876-B76E-49101E35C76A}
+	EndGlobalSection
+EndGlobal

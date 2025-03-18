@@ -1,0 +1,12 @@
+@page "/logout"
+@inject  Services.AuthService AuthService
+@inject NavigationManager Navigation
+@using ScheduleDay.Shared.Models
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        // Log out user and redirect to login page
+        await AuthService.Logout();
+        Navigation.NavigateTo("/login");
+    }
+}

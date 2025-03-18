@@ -1,0 +1,342 @@
+@page "/tasks"
+@inject ScheduleDay.Client.Services.TaskService TaskService
+@inject NavigationManager Navigation
+@inject Services.ActivityMonitor ActivityMonitor
+@using ScheduleDay.Shared.Models
+@attribute [Authorize]
+
+<HeadContent>
+    <PageTitle>Tasks Page</PageTitle>
+    <meta name="description" content="Task management page." />
+    <meta name="keywords" content="task, to-do, management, productivity" />
+</HeadContent>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-list-task"></i> My Tasks</h2>
+        <button class="btn btn-success" @onclick="CreateTask">
+            <i class="bi bi-plus-circle"></i> New Task
+        </button>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading your tasks...</p>
+        </div>
+    }
+    else if (error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @error
+        </div>
+    }
+    else if (!tasks.Any())
+    {
+        <div class="text-center my-5">
+            <i class="bi bi-clipboard-x display-1 text-muted"></i>
+            <h4 class="mt-3">You have no pending tasks</h4>
+            <p class="text-muted">Start by adding a new task!</p>
+            <button class="btn btn-primary mt-3" @onclick="CreateTask">
+                <i class="bi bi-plus-circle"></i> Create First Task
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" class="form-control" placeholder="Search for tasks..."
+                           @bind="searchTerm" @bind:event="oninput" />
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary" @onclick="() => SortTasks()">
+                        <i class="bi bi-sort-down"></i> Sort by Date
+                    </button>
+                    <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                   <ul class="dropdown-menu">
+    <li><a class="dropdown-item" @onclick="@(() => FilterTasks("all"))">All</a></li>
+    <li><a class="dropdown-item" @onclick="@(() => FilterTasks("pending"))">Pending</a></li>
+    <li><a class="dropdown-item" @onclick="@(() => FilterTasks("completed"))">Completed</a></li>
+</ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-list">
+            @foreach (var task in FilteredTasks)
+            {
+                <div class="card mb-2 @(selectedTaskId == task.ID ? "border-primary" : "")"
+                     @onclick="() => SelectTask(task.ID)">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="task-status me-3">
+                                @if (task.Status == "Completed")
+                                {
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                }
+                                else if (task.Status == "In Progress")
+                                {
+                                    <i class="bi bi-play-circle-fill text-primary"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-circle text-secondary"></i>
+                                }
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-1">@task.Name</h5>
+                                <p class="card-text text-muted mb-0">
+                                    <small>
+                                        <i class="bi bi-calendar"></i> @task.Date.ToShortDateString()
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                        @if (selectedTaskId == task.ID)
+                        {
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-primary" title="Edit Task" @onclick="() => EditTask(task.ID)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" title="View Task" @onclick="() => ViewTask(task.ID)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" title="Delete Task" @onclick="() => DeleteTask(task.ID)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" title="Complete Task" @onclick="() => MarksTaskComplete(task.ID)">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Metrics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center">
+                            <h6>Today's Tasks</h6>
+                            <div class="display-6">@GetTodayMetrics()</div>
+                            <small class="text-muted">completed tasks</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center">
+                            <h6>This Week's Tasks</h6>
+                            <div class="display-6">@GetWeekMetrics()</div>
+                            <small class="text-muted">completed tasks</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center">
+                            <h6>This Month's Tasks</h6>
+                            <div class="display-6">@GetMonthMetrics()</div>
+                            <small class="text-muted">completed tasks</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<TaskItem> tasks = new();
+    private int? selectedTaskId;
+    private bool isLoading = true;
+    private string? error;
+    private string searchTerm = "";
+    private string currentFilter = "all";
+    private bool isDescending = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load user's tasks on initialization
+        await LoadTasks();
+    }
+
+    private async Task LoadTasks()
+    {
+        // Get user's tasks and handle exceptions
+        try
+        {
+            isLoading = true;
+            error = null;
+            tasks = await TaskService.GetTasks();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            error = "You are not authorized to see the tasks. Please, log in again.";
+            Navigation.NavigateTo("/login");
+        }
+        catch (Exception)
+        {
+            error = "Error while loading the tasks. Please, try again.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private IEnumerable<TaskItem> FilteredTasks
+    {
+        // Filter tasks by search or filter and sort them
+        get
+        {
+            var filtered = tasks.AsEnumerable();
+
+            // Apply search
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                filtered = filtered.Where(t => 
+                    t.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    t.Description?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) == true);
+            }
+
+            // Apply filter
+            filtered = currentFilter switch
+            {
+                "pending" => filtered.Where(t => t.Status != "Completed"),
+                "completed" => filtered.Where(t => t.Status == "Completed"),
+                _ => filtered
+            };
+
+            // Apply sorting
+            return isDescending 
+                ? filtered.OrderByDescending(t => t.Date)
+                : filtered.OrderBy(t => t.Date);
+        }
+    }
+
+    private void SelectTask(int taskId)
+    {
+        // Select task that was clicked
+        selectedTaskId = selectedTaskId == taskId ? null : taskId;
+        ActivityMonitor.UpdateActivity();
+    }
+
+    private void CreateTask()
+    {
+        // Redirect to Create Task page
+        ActivityMonitor.UpdateActivity();
+        Navigation.NavigateTo("/tasks/create");
+    }
+
+    private void EditTask(int id)
+    {
+        // Redirect to Edit Task page
+        ActivityMonitor.UpdateActivity();
+        Navigation.NavigateTo($"/tasks/edit/{id}");
+    }
+
+    private void ViewTask(int id)
+    {
+        // Redirect to View Task page
+        ActivityMonitor.UpdateActivity();
+        Navigation.NavigateTo($"/tasks/view/{id}");
+    }
+
+    private async Task DeleteTask(int id)
+    {
+        // Attempt to delete selected task, or handle exceptions
+        try
+        {
+            if (await TaskService.DeleteTask(id))
+            {
+                selectedTaskId = null;
+                await LoadTasks();
+            }
+            else
+            {
+                error = "Unable to delete task. Please, try again.";
+            }
+        }
+        catch (UnauthorizedAccessException)
+        {
+            error = "You are not authorized to delete this task.";
+        }
+        catch (Exception)
+        {
+            error = "Error while deleting the task. Please, try again.";
+        }
+    }
+    private async Task MarksTaskComplete(int id)
+    {
+        ActivityMonitor.UpdateActivity();
+
+        TaskItem? currentTask = await TaskService.GetTaskById(id);
+        currentTask.Status = "Completed";
+        await TaskService.UpdateTask(currentTask);
+
+        selectedTaskId = null;
+        await LoadTasks();
+    }
+
+    private void SortTasks()
+    {
+        // Sort tasks correspondingly
+        isDescending = !isDescending;
+        ActivityMonitor.UpdateActivity();
+    }
+
+    private void FilterTasks(string filter)
+    {
+        // Filter tasks correspondingly
+        currentFilter = filter;
+        ActivityMonitor.UpdateActivity();
+    }
+
+    private string GetTodayMetrics()
+    {
+        // Get metrics on completed tasks today
+        var totalTasks = tasks.Count();
+        var completedToday = tasks.Count(t => 
+            t.Status == "Completed" && 
+            t.Date.Date == DateTime.Today);
+        return $"{completedToday}/{totalTasks}";
+    }
+
+    private string GetWeekMetrics()
+    {
+        // Get metrics on completed tasks this week
+        var totalTasks = tasks.Count();
+        var startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
+        var completedThisWeek = tasks.Count(t => 
+            t.Status == "Completed" && 
+            t.Date.Date >= startOfWeek &&
+            t.Date.Date <= DateTime.Today);
+        return $"{completedThisWeek}/{totalTasks}";
+    }
+
+    private string GetMonthMetrics()
+    {
+        // Get metrics on completed tasks this month
+        var totalTasks = tasks.Count();
+        var startOfMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+        var completedThisMonth = tasks.Count(t => 
+            t.Status == "Completed" && 
+            t.Date.Date >= startOfMonth &&
+            t.Date.Date <= DateTime.Today);
+        return $"{completedThisMonth}/{totalTasks}";
+    }
+}

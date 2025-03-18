@@ -1,0 +1,76 @@
+@page "/tasks/view/{Id:int}"
+@inject ScheduleDay.Client.Services.TaskService TaskService
+@inject NavigationManager Navigation
+@attribute [Authorize]
+@using ScheduleDay.Shared.Models
+
+<HeadContent>
+    <PageTitle>Preview Task</PageTitle>
+    <meta name="description" content="Preview tasks in your to-do list." />
+    <meta name="keywords" content="preview task, view task, to-do, productivity, task management" />
+</HeadContent>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Task Details</h3>
+                </div>
+                <div class="card-body">
+                    @if (task != null)
+                    {
+                        <dl class="row">
+                            <dt class="col-sm-3">Name</dt>
+                            <dd class="col-sm-9">@task.Name</dd>
+
+                            <dt class="col-sm-3">Description</dt>
+                            <dd class="col-sm-9">@task.Description</dd>
+
+                            <dt class="col-sm-3">Date</dt>
+                            <dd class="col-sm-9">@task.Date.ToShortDateString()</dd>
+
+                            <dt class="col-sm-3">Status</dt>
+                            <dd class="col-sm-9">@task.Status</dd>
+                        </dl>
+                    }
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-secondary" @onclick="GoBack">Go Back</button>
+                        <button class="btn btn-primary" @onclick="() => EditTask(Id)">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private TaskItem? task;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get corresponding task by id
+        task = await TaskService.GetTaskById(Id);
+        if (task == null)
+        {
+            Navigation.NavigateTo("/tasks");
+        }
+    }
+
+    private void GoBack()
+    {
+        // Redirect to /tasks route
+        Navigation.NavigateTo("/tasks");
+    }
+
+    private void EditTask(int id)
+    {
+        // Redirect to Edit Task page
+        Navigation.NavigateTo($"/tasks/edit/{id}");
+    }
+}

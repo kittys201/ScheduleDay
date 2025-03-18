@@ -1,0 +1,27 @@
+@using ScheduleDay.Client.Shared
+@inherits LayoutComponentBase
+@inject Services.ActivityMonitor ActivityMonitor
+
+<div class="page">
+    <div class="navbar-wrapper">
+        <NavMenu />
+    </div>
+
+    <div class="main">
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ActivityMonitor.UpdateActivity();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        ActivityMonitor.UpdateActivity();
+    }
+}
