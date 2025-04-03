@@ -20,7 +20,7 @@ obj/
 *.code-workspace
 
 ## ASP.NET & Blazor specific
-wwwroot/
+# wwwroot/
 Properties/launchSettings.json
 
 ## NuGet packages
