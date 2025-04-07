@@ -25,7 +25,7 @@ builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
 
 // Configuración del HttpClient con la URL base correcta
 var baseAddress = builder.HostEnvironment.IsProduction() 
-    ? "https://scheduledayteamtwo-h9d3gcdcc0d8ecdq.canadacentral-01.azurewebsites.net/"
+    ? "https://scheduledayapp-dwhbhsbzecbgcdfy.canadacentral-01.azurewebsites.net"
     : "https://localhost:7073/";
 
 builder.Services.AddHttpClient("API", client => 
