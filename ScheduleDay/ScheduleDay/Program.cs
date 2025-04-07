@@ -59,7 +59,8 @@ builder.Services.AddCors(options =>
                 "https://localhost:7073",
                 "http://localhost:5176",
                 "https://localhost:44340",
-                "https://scheduledayteamtwo-h9d3gcdcc0d8ecdq.canadacentral-01.azurewebsites.net"
+                "https://scheduledayteamtwo-h9d3gcdcc0d8ecdq.canadacentral-01.azurewebsites.net",
+                "https://scheduledayapp-dwhbhsbzecbgcdfy.canadacentral-01.azurewebsites.net"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
