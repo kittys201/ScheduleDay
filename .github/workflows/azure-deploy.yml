@@ -1,0 +1,35 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [ main ]  # Adjust if your primary branch is named differently
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'  # Match your project .NET version
+        
+    - name: Restore dependencies
+      run: dotnet restore ScheduleDay/ScheduleDay.sln
+      
+    - name: Build
+      run: dotnet build ScheduleDay/ScheduleDay.sln --configuration Release --no-restore
+      
+    - name: Publish
+      run: dotnet publish ScheduleDay/ScheduleDay/ScheduleDay.csproj -c Release -o ${{github.workspace}}/publish
+      
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'scheduledayapp'  # Replace with your app name
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{github.workspace}}/publish
