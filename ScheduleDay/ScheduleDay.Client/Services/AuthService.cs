@@ -1,4 +1,6 @@
 using System.Net.Http.Json;
+using ScheduleDay.Shared.Models;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Text.Json;
 using Blazored.LocalStorage;
@@ -115,7 +117,40 @@ namespace ScheduleDay.Client.Services
             }
         }
 
+
+        public async Task<AuthState?> GetAuthState()
+        {
+            try
+            {
+                var token = await _localStorage.GetItemAsync<string>("authToken");
+                if (string.IsNullOrEmpty(token))
+                    return null;
+
+                _http.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await _http.GetAsync("api/auth/state");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<AuthState>();
+                    return result;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error obteniendo estado de autenticación");
+                return null;
+            }
+        }
+
+
+
+
         public async Task Logout()
+
         {
             try
             {
@@ -142,9 +177,10 @@ namespace ScheduleDay.Client.Services
             public string Message { get; set; } = string.Empty;
         }
 
-        private class AuthState
+        public class AuthState //le cambie de private a public para poder acceder a el ID
         {
             public bool IsAuthenticated { get; set; }
+            public string? UserId { get; set; }  // Esta la agregué para ppder tomar el ID del user autenticado
             public string? Name { get; set; }
             public string? Email { get; set; }
         }

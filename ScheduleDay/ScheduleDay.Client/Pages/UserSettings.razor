@@ -1,0 +1,86 @@
+@page "/user/settings/{id:int}"
+@inject ScheduleDay.Client.Services.UserService UserService
+@inject NavigationManager Navigation
+@attribute [Authorize]
+@using ScheduleDay.Shared.Models
+
+<HeadContent>
+    <PageTitle>ScheduleDay | See User Information</PageTitle>
+    <meta name="description" content="Edit your account information and preferences." />
+    <meta name="keywords" content="edit profile, update account, user settings, account management" />
+</HeadContent>
+
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-mt-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3>User Information</h3>
+                </div>
+                <div>
+                    <p>
+                        Update your account details here. You can modify your name, email, and password. Make sure your
+                        information is accurate and up to date for a smooth experience.
+                    </p>
+                </div>
+
+                <div class="card-body">
+                    @if (user != null)
+                    {
+                        <dl class="row">
+                            <dt class="col-sm-3">User Name:</dt>
+                            <dd class="col-sm-9">@user.Name</dd>
+
+                            <dt class="col-sm-3">Email:</dt>
+                            <dd class="col-sm-9">@user.Email</dd>
+
+                            <dt class="col-sm-3">Password:</dt>
+                            <dd class="col-sm-9">********</dd> @* Oculté la contraseña por seguridad *@
+                        </dl>
+                    }
+                    else
+                    {
+                        <p>No user data available.</p>
+                    }
+                </div>
+
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-secondary" @onclick="GoBack">Go Back</button>
+                        <button class="btn btn-primary" @onclick="() => EditUserInformation(Id)">Update your Information</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private User? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get corresponding user by his/her id
+        user = await UserService.GetUserById(Id);
+        if (user == null)
+        {
+            Navigation.NavigateTo("/tasks");
+        }
+    }
+
+    private void GoBack()
+    {
+        // Redirect to /tasks route
+        Navigation.NavigateTo("/tasks");
+    }
+
+    private void EditUserInformation(int id)
+    {
+        // Redirect to Edit Task page
+        Navigation.NavigateTo($"/user/settings/edit/{id}");
+    }
+}

@@ -1,0 +1,154 @@
+@page "/user/settings/edit/{id:int}"
+@inject ScheduleDay.Client.Services.UserService UserService
+@inject NavigationManager Navigation
+@attribute [Authorize]
+@using ScheduleDay.Shared.Models
+
+<HeadContent>
+    <PageTitle>ScheduleDay | Edit User Information</PageTitle>
+    <meta name="description" content="Edit your personal information and account details." />
+    <meta name="keywords" content="edit user, update profile, account settings, user information" />
+</HeadContent>
+
+@if (isLoading)
+{
+    <p>Loading user information...</p>
+}
+else if (user is not null)
+{
+    <div class="container mt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-8 mt-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Edit User Information</h3>
+                    </div>
+
+                    <div>
+                        <p class="px-3 pt-2">
+                            Update your account details here. You can modify your name, email, and password. Make sure your
+                            information is accurate and up to date for a smooth experience.
+                        </p>
+                    </div>
+
+                    <div class="card-body">
+                        <EditForm Model="user" OnValidSubmit="UpdateUser">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger" role="alert" />
+
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Your Name:</label>
+                                <InputText id="name" @bind-Value="user.Name" class="form-control" />
+                                <ValidationMessage For="() => user.Name" class="text-danger" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email:</label>
+                                <InputText id="email" @bind-Value="user.Email" class="form-control" />
+                                <ValidationMessage For="() => user.Email" class="text-danger" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password:</label>
+                                <InputText id="password" @bind-Value="user.Password" type="password" class="form-control" />
+                                <ValidationMessage For="() => user.Password" class="text-danger" />
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <NavLink class="btn btn-outline-info" href="/tasks">Back to Tasks</NavLink>
+
+                                <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                                    @if (isSubmitting)
+                                    {
+                                        <span>Updating...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Update Information</span>
+                                    }
+                                </button>
+                            </div>
+                        </EditForm>
+
+                        @if (isUpdated)
+                        {
+                            <div class="alert alert-success mt-3">Customer information updated successfully!</div>
+                        }
+                        @if (errorMessage != null)
+                        {
+                            <div class="alert alert-danger mt-3">@errorMessage</div>
+                        }
+                    </div>
+
+                    <div class="card-footer text-muted text-end">
+                        Last update attempt: @DateTime.Now.ToShortTimeString()
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No information was found related to that user.</p>
+}
+
+
+
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private User? user;
+    private bool isUpdated = false;
+    private bool isLoading = true;
+    private bool isSubmitting = false;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            user = await UserService.GetUserById(Id);
+            if (user != null)
+            {
+                user.Password = "";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading user: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+
+    }
+
+    private async Task UpdateUser()
+    {
+        isSubmitting = true;
+        try
+        {
+            if (user is not null)
+            {
+                await UserService.UpdateUser(Id, user);
+                isUpdated = true;
+                StateHasChanged(); //forzar actualizacion.
+                await Task.Delay(2000); //le doy un tiempo para que el usuario vea el mensaje de exito.
+                Navigation.NavigateTo($"/user/settings/{Id}");
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating user: {ex.Message}";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+}

@@ -17,6 +17,8 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 builder.Services.AddScoped<ActivityMonitor>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TaskService>();
+builder.Services.AddScoped<UserService>();
+
 
 // Configuración de HttpClient con interceptor JWT
 builder.Services.AddScoped<CustomAuthorizationMessageHandler>();

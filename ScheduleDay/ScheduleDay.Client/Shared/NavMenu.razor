@@ -1,4 +1,6 @@
 @using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ScheduleDay.Client.Services.UserService UserService
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
@@ -8,7 +10,8 @@
         </button>
 
         <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            @* <ul class="navbar-nav me-auto mb-2 mb-lg-0"> *@
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <AuthorizeView>
                     <Authorized>
                         <li class="nav-item">
@@ -16,11 +19,22 @@
                                 Tasks
                             </a>
                         </li>
+
+                        <li id="btn-hover" class="nav-item d-flex align-items-center">
+
+                            <button class="nav-link btn btn-link" @onclick="HandleUserSettings">
+                                @UserNameToDisplay
+                            </button>
+                            <div id="user-avatar" style="background-color:@UserColor;">
+                                @UserInitial
+                            </div>
+                        </li>
                         <li class="nav-item">
-                            <button class="nav-link btn btn-link" @onclick="HandleLogout">
+                            <button class="nav-link btn btn-link ps-0 ms-0" @onclick="HandleLogout">
                                 Log out
                             </button>
                         </li>
+
                     </Authorized>
                     <NotAuthorized>
                         <li class="nav-item">
@@ -41,9 +55,30 @@
 </nav>
 
 @code {
+
+
     private bool collapseNavMenu = true;
     private string? NavMenuCssClass => collapseNavMenu ? "collapse navbar-collapse" : "navbar-collapse";
-    
+
+
+    private string UserInitial { get; set; } = "";
+    private string UserNameToDisplay { get; set; } = "";
+
+    private string UserColor { get; set; } = "";
+
+    private string GetRandomColor()
+    {
+        var randomColor = new Random();
+        return $"#{randomColor.Next(0x1000000):X6}";
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserColor = GetRandomColor();
+        // here I am calling the UpdateUserInformation method to get the user information
+        await UpdateUserInformation();
+    }
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
@@ -58,6 +93,61 @@
     private async Task HandleLogout()
     {
         await AuthService.Logout();
+        await UpdateUserInformation();
         NavigationManager.NavigateTo("/", true);
     }
+
+    private async Task HandleUserSettings()
+    {
+
+        var authState = await AuthService.GetAuthState();
+
+        if (authState?.IsAuthenticated == true && !string.IsNullOrEmpty(authState.UserId))
+        {
+            await UpdateUserInformation();
+            NavigationManager.NavigateTo($"/user/settings/{authState.UserId}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+
+
+
+    private async Task UpdateUserInformation()
+    {
+        var authState = await AuthService.CheckAuthState();
+        if (authState)
+        {
+            var authStateGet = await AuthService.GetAuthState();
+
+            if (authStateGet != null && !string.IsNullOrEmpty(authStateGet.Name))
+            {
+                var userName = authStateGet.Name;
+                UserInitial = userName.Substring(0, 1).ToUpper();
+
+                var firstName = userName.Split(' ').FirstOrDefault();
+                if (firstName.Length > 15)
+                {
+                    UserNameToDisplay = firstName.Substring(0, 12) + "...";
+                }
+                else
+                {
+                    UserNameToDisplay = firstName;
+                }
+
+                UserNameToDisplay = char.ToUpper(UserNameToDisplay[0]) + UserNameToDisplay.Substring(1).ToLower();
+            }
+            else
+            {
+                UserInitial = "U";
+            }
+        }
+
+        StateHasChanged(); // force update the UI
+    }
+
+
 }
