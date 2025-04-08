@@ -1,0 +1,44 @@
+name: Deploy Frontend Client to Azure
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'ScheduleDay/ScheduleDay.Client/**'
+      - 'ScheduleDay/ScheduleDay.Shared/**'
+      - '.github/workflows/client-deploy.yml'
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  build-and-deploy-client:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Update API Base URL
+      run: |
+        echo "Updating API base URL in client code..."
+        sed -i 's|var baseAddress = builder.HostEnvironment.IsProduction() ? "https://scheduledayteamtwo-h9d3gcdcc0d8ecdq.canadacentral-01.azurewebsites.net/" : "https://localhost:7073/";|var baseAddress = builder.HostEnvironment.IsProduction() ? "https://scheduledayapp-api.azurewebsites.net/" : "https://localhost:7073/";|g' ScheduleDay/ScheduleDay.Client/Program.cs
+        
+    - name: Restore dependencies
+      run: dotnet restore ScheduleDay/ScheduleDay.sln
+      
+    - name: Build
+      run: dotnet build ScheduleDay/ScheduleDay.sln --configuration Release --no-restore
+      
+    - name: Publish Client
+      run: dotnet publish ScheduleDay/ScheduleDay.Client/ScheduleDay.Client.csproj -c Release -o ${{github.workspace}}/publish-client
+      
+    - name: Deploy to Azure Web App (Client)
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'scheduledayapp-client'  # Nombre de tu App Service para Cliente
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_CLIENT_PUBLISH_PROFILE }}
+        package: ${{github.workspace}}/publish-client
