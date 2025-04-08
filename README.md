@@ -105,7 +105,7 @@ dotnet test
 
 ## 🚢 Deployment
 
-This application is deployed using Azure App Services. The server side and client side were deployed separately. You may access the web application at this URL: https://myscheduledayclient.azurewebsites.net/
+This application is deployed using Azure App Services. The server side and client side were deployed separately. You may access the web application at this URL: https://scheduledayapp-client-a7cqf2g2hncmeggs.canadacentral-01.azurewebsites.net/
 
 Video demonstration (YouTube): https://www.youtube.com/video1
 
