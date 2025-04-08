@@ -21,7 +21,7 @@ namespace ScheduleDay.Client.Services
             ILogger<AuthService> logger)
         {
             _http = http;
-            _http.BaseAddress = new Uri("https://localhost:7073/");
+           // _http.BaseAddress = new Uri("https://localhost:7073/");
             _authStateProvider = authStateProvider;
             _localStorage = localStorage;
             _logger = logger;
