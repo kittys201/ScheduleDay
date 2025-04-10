@@ -1,5 +1,6 @@
 @page "/"
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @using ScheduleDay.Shared.Models
 
 <HeadContent>
@@ -60,12 +61,27 @@
 </div>
 
 @code {
+    private AuthenticationState? _authenticationState = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get authentication state
+        _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        // Check if user is authenticated
+        if (_authenticationState.User.Identity?.IsAuthenticated == true)
+        {
+            // Redirect to tasks
+            Navigation.NavigateTo("/tasks");
+        }
+    }
+
     private void GoToLogin()
     {
         // Redirect to Login page
         Navigation.NavigateTo("/login");
     }
-    
+
     private void GoToRegister()
     {
         // Redirect to Register page
