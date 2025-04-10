@@ -15,9 +15,10 @@ obj/
 *.njsproj
 *.sln.docstates
 
-## Visual Studio Code
+## Visual Studio Code and Visual Studio
 .vscode/
 *.code-workspace
+.vs/
 
 ## ASP.NET & Blazor specific
 # wwwroot/
