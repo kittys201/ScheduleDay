@@ -73,6 +73,15 @@
                         </div>
                     </EditForm>
                 </div>
+
+                <div class="card-body">
+                    <div>
+                        <button class="btn btn-primary" @onclick="GoogleOAuth">
+                            <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google logo" />
+                            Sign in with Google
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -163,5 +172,14 @@
         public string Password { get; set; } = string.Empty;
 
         public bool RememberMe { get; set; }
+    }
+
+
+
+    private void GoogleOAuth()
+    {
+        Navigation.NavigateTo("https://localhost:7073/api/auth/externallogin", true);
+        
+
     }
 }

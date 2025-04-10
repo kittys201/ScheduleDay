@@ -6,6 +6,10 @@ using ScheduleDay.Data;
 using System.Text.Json;
 using ScheduleDay.Models;
 using ScheduleDay.Components;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +31,9 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // need for google redirect
 })
+
 .AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -41,7 +47,22 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.ASCII.GetBytes(jwtSettings.SecretKey))
     };
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/api/auth/externallogin"; 
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+}) 
+.AddGoogle(options =>
+{
+    var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+    options.ClientId = googleAuthNSection["ClientId"];
+    options.ClientSecret = googleAuthNSection["ClientSecret"];
+    options.CallbackPath = "/api/auth/googlecallback";
+    // options.CallbackPath = "/signin-google"; // by default
 });
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -93,6 +114,14 @@ app.UseRouting();
 
 // Orden correcto del middleware
 app.UseCors("AllowAll");
+
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax,
+    HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
+    Secure = CookieSecurePolicy.Always
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 

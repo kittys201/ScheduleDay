@@ -71,4 +71,10 @@
         // Redirect to Register page
         Navigation.NavigateTo("/register");
     }
+
+    private void GoogleOAuth() {
+            Navigation.NavigateTo("https://localhost:7073/api/auth/externallogin", true);
+            // it shoud be the port of clinet?
+
+    }
 }

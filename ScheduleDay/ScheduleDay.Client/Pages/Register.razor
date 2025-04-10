@@ -70,12 +70,21 @@
                         </div>
                     </EditForm>
                 </div>
+
+                <div class="card-body">
+                    <button class="btn btn-primary" @onclick="GoogleOAuth">
+                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google logo" />
+                        Sign in with Google
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+
 @code {
+
     private RegisterModel registerModel = new();
     private string? error;
     private string? successMessage;
@@ -93,9 +102,9 @@
             _logger.LogInformation("Starting registration for the following user: {Email}", registerModel.Email);
 
             var result = await AuthService.Register(
-                registerModel.Name,
-                registerModel.Email,
-                registerModel.Password);
+            registerModel.Name,
+            registerModel.Email,
+            registerModel.Password);
 
             bool success = result.Success;
             string message = result.Message;
@@ -137,7 +146,32 @@
         [Required(ErrorMessage = "Password is required")]
         [MinLength(6, ErrorMessage = "Password must contain at least 6 characters")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$",
-            ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one number")]
+        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one number")]
         public string Password { get; set; } = string.Empty;
     }
+
+
+    private void GoogleOAuth()
+    {
+
+        Navigation.NavigateTo("https://localhost:7073/api/auth/externallogin", true);
+        // it shoud be the port of clinet?
+
+    }
 }
+
+
+
+@* No puedes acceder porque esta app envió una solicitud no válida. Puedes volver a intentarlo más tarde o comunicarte con
+el desarrollador acerca de este problema. Más información sobre este error
+Si eres un desarrollador de esta app, consulta los detalles del error.
+Error 400: redirect_uri_mismatch
+
+
+Error 400: redirect_uri_mismatch
+
+No puedes acceder a esta app porque no cumple con la política OAuth 2.0 de Google.
+
+Si eres el desarrollador de la app, registra el URI de redireccionamiento en Google Cloud Console.
+Detalles de la solicitud: redirect_uri=https://localhost:7073/signin-google flowName=GeneralOAuthFlow
+Documentos de desarrolladores relacionados *@

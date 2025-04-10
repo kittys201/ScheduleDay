@@ -9,6 +9,9 @@ using ScheduleDay.Shared.Models;
 using ScheduleDay.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+
 
 namespace ScheduleDay.Controllers
 {
@@ -21,7 +24,7 @@ namespace ScheduleDay.Controllers
         private readonly JwtSettings _jwtSettings;
 
         public AuthController(
-            AppDbContext context, 
+            AppDbContext context,
             ILogger<AuthController> logger,
             IOptions<JwtSettings> jwtSettings)
         {
@@ -31,42 +34,43 @@ namespace ScheduleDay.Controllers
         }
 
         [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
-    {
-        // Submit login request to the server
-        try 
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            if (!ModelState.IsValid)
+            // Submit login request to the server
+            try
             {
-                return BadRequest(new { message = "Invalid input data" });
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { message = "Invalid input data" });
+                }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => 
-                u.Email.ToLower() == request.Email.ToLower());
-            
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+                var user = await _context.Users.FirstOrDefaultAsync(u =>
+                    u.Email.ToLower() == request.Email.ToLower());
+
+                if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+                {
+                    return Unauthorized(new { message = "Incorrect email or password" });
+                }
+
+                var token = GenerateJwtToken(user);
+
+                _logger.LogInformation($"{user.Email} has logged in successfully");
+
+                return Ok(new
+                {
+                    token = token,
+                    userId = user.ID,
+                    name = user.Name,
+                    email = user.Email,
+                    rememberMe = request.RememberMe
+                });
+            }
+            catch (Exception ex)
             {
-                return Unauthorized(new { message = "Incorrect email or password" });
+                _logger.LogError($"Login error: {ex}");
+                return StatusCode(500, new { message = "Internal Server Error" });
             }
-
-            var token = GenerateJwtToken(user);
-
-            _logger.LogInformation($"{user.Email} has logged in successfully");
-
-            return Ok(new { 
-                token = token,
-                userId = user.ID,
-                name = user.Name,
-                email = user.Email,
-                rememberMe = request.RememberMe
-            });
         }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Login error: {ex}");
-            return StatusCode(500, new { message = "Internal Server Error" });
-        }
-    }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
@@ -159,6 +163,82 @@ namespace ScheduleDay.Controllers
             }
         }
 
+
+
+
+// // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE
+        // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE // // GOOGLE
+
+        [HttpGet("externallogin")]
+        [AllowAnonymous]
+        public IActionResult ExternalLogin(string returnUrl = null) {
+            // Redirect to external login provider
+            var redirectUrl = Url.Action("googleCallback", "Auth", new { ReturnUrl = returnUrl });
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);  
+        }
+
+        [HttpGet("googlecallback")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleCallback(string returnUrl = null, string remoteError = null)
+        {
+            if (!string.IsNullOrEmpty(remoteError))
+            {
+                return BadRequest($"Error from external provider: {remoteError}");
+            }
+
+            // Authenticate the user with Google
+            // here we are using the default authentication scheme for Google
+    
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            if (!result.Succeeded)
+            {
+                return BadRequest("Error authenticating");
+            }
+            // Get user claims from the result
+            // we can use the claims to get the user information
+            var claims = result.Principal?.Claims;
+            var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("Email claim not found");
+            }
+
+            // verify if the user exists in the database we aready have
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+            if (user == null)
+            {
+                // if user does not exist, create a new user
+                // we can use the name and email from the claims
+                user = new User
+                {
+                    Name = name ?? email, // in case name is null
+                    Email = email,
+                    Password = "GoogleAccount" // or any default value, since we are not using it
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+            }
+
+            // Generate JWT token for the user
+            var token = GenerateJwtToken(user);
+
+            _logger.LogInformation($"{user.Email} Logged in with Google successfully");
+
+            // Puedes redirigir al cliente con el token en la query string, o devolver JSON
+            // Ejemplo devolviendo JSON:
+
+            // return Ok(new { token, userId = user.ID, name = user.Name, email = user.Email });
+            var redirectUrl = $"https://localhost:5001/auth-complete?token={token}&email={Uri.EscapeDataString(user.Email)}&name={Uri.EscapeDataString(user.Name)}";
+            return Redirect(redirectUrl);
+
+        }
+
+
+
         private string GenerateJwtToken(User user)
         {
             // Generate JWT token for authentication
@@ -185,5 +265,8 @@ namespace ScheduleDay.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+
+        
     }
 }
