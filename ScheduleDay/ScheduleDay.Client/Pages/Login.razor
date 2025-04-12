@@ -37,7 +37,8 @@
                         </div>
 
                         <div class="mb-3 form-check">
-                            <InputCheckbox @bind-Value="loginModel.RememberMe" class="form-check-input" id="rememberMe" />
+                            <InputCheckbox @bind-Value="loginModel.RememberMe" class="form-check-input"
+                                id="rememberMe" />
                             <label class="form-check-label" for="rememberMe">
                                 Stay logged in
                             </label>
@@ -73,14 +74,15 @@
                         </div>
                     </EditForm>
                 </div>
+                <div class="d-grid gap-2 text-center">
+                    <p class="m-0">Or</p>
+                </div>
 
-                <div class="card-body">
-                    <div>
-                        <button class="btn btn-primary" @onclick="GoogleOAuth">
-                            <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google logo" />
-                            Sign in with Google
-                        </button>
-                    </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" @onclick="GoogleOAuth" class="btn btn-danger" disabled="@isLoading">
+                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google logo" />
+                        Sign in with Google
+                    </button>
                 </div>
             </div>
         </div>
@@ -123,15 +125,15 @@
             _logger.LogInformation("Trying to log in the following user: {Email}", loginModel.Email);
 
             var (success, message) = await AuthService.Login(
-                loginModel.Email, 
-                loginModel.Password, 
-                loginModel.RememberMe);
+            loginModel.Email,
+            loginModel.Password,
+            loginModel.RememberMe);
 
             if (success)
             {
                 _logger.LogInformation("Successful login, updating state...");
                 await Task.Delay(500); //Short pause to make sure state is updated
-                
+
                 ActivityMonitor.UpdateActivity();
                 if (string.IsNullOrEmpty(returnUrl))
                 {
@@ -178,8 +180,11 @@
 
     private void GoogleOAuth()
     {
+
         Navigation.NavigateTo("https://localhost:7073/api/auth/externallogin", true);
-        
+        @* Navigation.NavigateTo("api/auth/externallogin", true); *@
+        //
+
 
     }
 }

@@ -160,7 +160,7 @@ namespace ScheduleDay.Client.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error durante el logout");
+                _logger.LogError(ex, "Error during logout");
             }
         }
 
@@ -177,10 +177,10 @@ namespace ScheduleDay.Client.Services
             public string Message { get; set; } = string.Empty;
         }
 
-        public class AuthState //le cambie de private a public para poder acceder a el ID
+        public class AuthState //i changed this class to add the UserId property
         {
             public bool IsAuthenticated { get; set; }
-            public string? UserId { get; set; }  // Esta la agregué para ppder tomar el ID del user autenticado
+            public string? UserId { get; set; } 
             public string? Name { get; set; }
             public string? Email { get; set; }
         }

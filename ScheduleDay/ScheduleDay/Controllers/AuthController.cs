@@ -228,8 +228,6 @@ namespace ScheduleDay.Controllers
 
             _logger.LogInformation($"{user.Email} Logged in with Google successfully");
 
-            // Puedes redirigir al cliente con el token en la query string, o devolver JSON
-            // Ejemplo devolviendo JSON:
 
             // return Ok(new { token, userId = user.ID, name = user.Name, email = user.Email });
             var redirectUrl = $"https://localhost:5001/auth-complete?token={token}&email={Uri.EscapeDataString(user.Email)}&name={Uri.EscapeDataString(user.Name)}";

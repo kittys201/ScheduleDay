@@ -48,19 +48,27 @@ builder.Services.AddAuthentication(options =>
             Encoding.ASCII.GetBytes(jwtSettings.SecretKey))
     };
 })
+// .AddCookie(options =>
+// {
+//     options.LoginPath = "/api/auth/externallogin"; 
+//     options.Cookie.SameSite = SameSiteMode.Lax;
+//     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+// }) 
+
 .AddCookie(options =>
 {
-    options.LoginPath = "/api/auth/externallogin"; 
-    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SameSite = SameSiteMode.None; // 👈 importante para cross-site
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-}) 
+    options.LoginPath = "/api/auth/externallogin";
+})
+
 .AddGoogle(options =>
 {
     var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
     options.ClientId = googleAuthNSection["ClientId"];
     options.ClientSecret = googleAuthNSection["ClientSecret"];
-    options.CallbackPath = "/api/auth/googlecallback";
-    // options.CallbackPath = "/signin-google"; // by default
+    // options.CallbackPath = "/api/auth/googlecallback";
+    options.CallbackPath = "/signin-google"; // by default
 });
 
 
@@ -110,20 +118,35 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+// app.UseRouting();
+
+// app.UseCors("AllowAll");
+
+// app.UseCookiePolicy(new CookiePolicyOptions
+// {
+//     MinimumSameSitePolicy = SameSiteMode.Lax,
+//     HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
+//     Secure = CookieSecurePolicy.Always
+// });
+
+// app.UseAuthentication();
+// app.UseAuthorization();
+
 app.UseRouting();
-
-// Orden correcto del middleware
 app.UseCors("AllowAll");
-
 app.UseCookiePolicy(new CookiePolicyOptions
 {
-    MinimumSameSitePolicy = SameSiteMode.Lax,
+    MinimumSameSitePolicy = SameSiteMode.None, 
     HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
     Secure = CookieSecurePolicy.Always
 });
 
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseAntiforgery();
+
 
 app.MapControllers();
 app.MapRazorComponents<App>()
