@@ -71,12 +71,25 @@
                         </div>
                     </EditForm>
                 </div>
+
+                <div class="d-grid gap-2 text-center">
+                    <p class="m-0">Or</p>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" @onclick="GoogleOAuth" class="btn btn-danger" disabled="@isLoading">
+                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google logo" />
+                        Register with Google
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+
 @code {
+
     private RegisterModel registerModel = new();
     private string? error;
     private string? successMessage;
@@ -154,5 +167,14 @@
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$",
         ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one number")]
         public string Password { get; set; } = string.Empty;
+    }
+
+
+    private void GoogleOAuth()
+    {
+
+        Navigation.NavigateTo("https://localhost:7073/api/auth/externallogin", true);
+        // it shoud be the port of clinet?
+
     }
 }

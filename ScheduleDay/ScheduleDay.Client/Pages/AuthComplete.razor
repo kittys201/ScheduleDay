@@ -1,0 +1,35 @@
+@page "/auth-complete"
+@using Blazored.LocalStorage
+@using ScheduleDay.Client.Providers
+@inject NavigationManager Navigation
+@inject ILocalStorageService LocalStorage
+@inject CustomAuthStateProvider AuthStateProvider
+
+<h3>Login...</h3>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        var token = query.Get("token");
+        var email = query.Get("email");
+        var name = query.Get("name");
+
+        if (!string.IsNullOrEmpty(token))
+        {
+            // Store the token and user information in local storage
+            await LocalStorage.SetItemAsync("authToken", token);
+            await LocalStorage.SetItemAsync("userEmail", email);
+            await LocalStorage.SetItemAsync("userName", name);
+
+            AuthStateProvider.NotifyAuthenticationStateChanged();
+            Navigation.NavigateTo("/tasks", true);
+        }
+        else
+        {
+            Navigation.NavigateTo("/login", true);
+        }
+    }
+}

@@ -36,7 +36,7 @@ namespace ScheduleDay.Client.Providers
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var jwtToken = tokenHandler.ReadJwtToken(token);
 
-                // Verificar si el token ha expirado
+                // Check if the token is expired
                 if (jwtToken.ValidTo < DateTime.UtcNow)
                 {
                     await _localStorage.RemoveItemAsync("authToken");
