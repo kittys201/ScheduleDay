@@ -1,4 +1,7 @@
 @page "/user/settings/{id:int}"
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ScheduleDay.Client.Services.UserService UserService
 @inject NavigationManager Navigation
 @attribute [Authorize]
@@ -48,8 +51,13 @@
                 <div class="card-footer">
                     <div class="d-flex justify-content-between">
                         <button class="btn btn-secondary" @onclick="GoBack">Go Back</button>
-                        <button class="btn btn-primary" @onclick="() => EditUserInformation(Id)">Update your
-                            Information</button>
+                        @* Don't show update information button if auth comes from Google *@
+                        @if (authUser?.Identity?.IsAuthenticated == true
+                            && !authUser.Claims.Any(c => c.Type == "auth_provider" && c.Value == "Google"))
+                        {
+                            <button class="btn btn-primary" @onclick="() => EditUserInformation(Id)">Update your
+                                Information</button>
+                        }
                     </div>
                 </div>
             </div>
@@ -62,9 +70,12 @@
     public int Id { get; set; }
 
     private User? user;
+    private ClaimsPrincipal authUser = new ClaimsPrincipal();
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        authUser = authState.User;
         // Get corresponding user by his/her id
         user = await UserService.GetUserById(Id);
         if (user == null)
