@@ -12,7 +12,6 @@ namespace ScheduleDay.Shared.Models
         [Required]
         [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
-
         public string? Description { get; set; }
 
         private DateTime _date;
@@ -23,6 +22,8 @@ namespace ScheduleDay.Shared.Models
         }
 
         public string Status { get; set; } = "Pending";
+        [NotMapped]
+        public bool? GoogleEvent { get; set; } = false;
 
         [ForeignKey("User")]
         public int UserID { get; set; }

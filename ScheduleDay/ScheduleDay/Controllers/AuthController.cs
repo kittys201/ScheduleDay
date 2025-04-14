@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ScheduleDay.Data;
@@ -22,15 +23,18 @@ namespace ScheduleDay.Controllers
 		private readonly AppDbContext _context;
 		private readonly ILogger<AuthController> _logger;
 		private readonly JwtSettings _jwtSettings;
+		private readonly IMemoryCache _cache;
 
 		public AuthController(
 			AppDbContext context,
 			ILogger<AuthController> logger,
-			IOptions<JwtSettings> jwtSettings)
+			IOptions<JwtSettings> jwtSettings,
+			IMemoryCache cache)
 		{
 			_context = context;
 			_logger = logger;
 			_jwtSettings = jwtSettings.Value;
+			_cache = cache;
 		}
 
 		[HttpPost("login")]
@@ -201,6 +205,11 @@ namespace ScheduleDay.Controllers
 			var claims = result.Principal?.Claims;
 			var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 			var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+			var googleAccessToken = result.Properties.GetTokenValue("access_token");
+
+			if (googleAccessToken is not null)
+				_cache.Set($"google_token_{email}", googleAccessToken, TimeSpan.FromMinutes(60));
 
 			if (string.IsNullOrEmpty(email))
 			{

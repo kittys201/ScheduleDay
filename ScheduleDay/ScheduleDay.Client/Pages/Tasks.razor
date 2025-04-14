@@ -75,7 +75,7 @@
         </div>
 
         <div class="task-list">
-            @foreach (var task in FilteredTasks)
+            @foreach (var task in FilteredTasks.Where(x => x.GoogleEvent.HasValue && !x.GoogleEvent.Value))
             {
                 <div class="card mb-2 @(selectedTaskId == task.ID ? "border-primary" : "")"
                     @onclick="() => SelectTask(task.ID)">
@@ -125,6 +125,28 @@
                         }
                     </div>
                 </div>
+            }
+            @if (FilteredTasks.Any(x => x.GoogleEvent.HasValue && x.GoogleEvent.Value))
+            {
+                <br />
+                <h3>Google Events</h3>
+                @foreach (var task in FilteredTasks.Where(x => x.GoogleEvent.HasValue && x.GoogleEvent.Value))
+                {
+                    <div class="card mb-2 @(selectedTaskId == task.ID ? "border-primary" : "")">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-1">@task.Name</h5>
+                                    <p class="card-text text-muted mb-0">
+                                        <small>
+                                            <i class="bi bi-calendar"></i> @task.Date.ToShortDateString()
+                                        </small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             }
         </div>
 
@@ -311,7 +333,8 @@
     private string GetTodayMetrics()
     {
         // Get metrics on completed tasks today
-        var totalTasks = tasks.Where(t => t.Date.ToString("d") == DateTime.Now.ToString("d")).Count();
+        var totalTasks = tasks.Where(t => t.GoogleEvent.HasValue && !t.GoogleEvent.Value && t.Date.ToString("d") ==
+        DateTime.Now.ToString("d")).Count();
         var completedToday = tasks.Count(t =>
         t.Status == "Completed" &&
         t.Date.Date == DateTime.Today);
@@ -323,6 +346,7 @@
         // Get metrics on completed tasks this week
         var startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
         var totalTasks = tasks.Where(t =>
+        t.GoogleEvent.HasValue && !t.GoogleEvent.Value &&
         t.Date.Date >= startOfWeek &&
         t.Date.Date <= DateTime.Today).Count();
 
@@ -337,7 +361,8 @@
     private string GetMonthMetrics()
     {
         // Get metrics on completed tasks this month
-        var totalTasks = tasks.Where(t => t.Date.Month == DateTime.Now.Month).Count();
+        var totalTasks = tasks.Where(t => t.GoogleEvent.HasValue && !t.GoogleEvent.Value && t.Date.Month ==
+        DateTime.Now.Month).Count();
         var startOfMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
         var completedThisMonth = tasks.Count(t =>
         t.Status == "Completed" &&
