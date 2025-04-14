@@ -240,8 +240,8 @@ namespace ScheduleDay.Controllers
 
 
 			// return Ok(new { token, userId = user.ID, name = user.Name, email = user.Email });
-			// var redirectUrl = $"https://scheduledayapp-client-a7cqf2g2hncmeggs.canadacentral-01.azurewebsites.net/auth-complete?token={token}&email={Uri.EscapeDataString(user.Email)}&name={Uri.EscapeDataString(user.Name)}";
-			var redirectUrl = $"https://localhost:5001/auth-complete?token={token}&email={Uri.EscapeDataString(user.Email)}&name={Uri.EscapeDataString(user.Name)}";
+			var redirectUrl = $"https://scheduledayapp-client-a7cqf2g2hncmeggs.canadacentral-01.azurewebsites.net/auth-complete?token={token}&email={Uri.EscapeDataString(user.Email)}&name={Uri.EscapeDataString(user.Name)}";
+			// var redirectUrl = $"https://localhost:5001/auth-complete?token={token}&email={Uri.EscapeDataString(user.Email)}&name={Uri.EscapeDataString(user.Name)}";
 
 			return Redirect(redirectUrl);
 
