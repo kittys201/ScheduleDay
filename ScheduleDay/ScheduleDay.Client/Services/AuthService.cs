@@ -21,7 +21,6 @@ namespace ScheduleDay.Client.Services
             ILogger<AuthService> logger)
         {
             _http = http;
-           // _http.BaseAddress = new Uri("https://localhost:7073/");
             _authStateProvider = authStateProvider;
             _localStorage = localStorage;
             _logger = logger;
@@ -43,17 +42,17 @@ namespace ScheduleDay.Client.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadFromJsonAsync<RegisterResponse>();
-                    return (true, result?.Message ?? "Registro exitoso");
+                    return (true, result?.Message ?? "Successful Registration");
                 }
 
                 var error = await response.Content.ReadAsStringAsync();
-                _logger.LogWarning($"Register fallido: {error}");
+                _logger.LogWarning($"Registration failed: {error}");
                 return (false, error);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error durante el registro");
-                return (false, $"Error durante el registro: {ex.Message}");
+                _logger.LogError(ex, "Error during registration");
+                return (false, $"Error during registration: {ex.Message}");
             }
         }
 
@@ -77,18 +76,18 @@ namespace ScheduleDay.Client.Services
                     {
                         await _localStorage.SetItemAsync("authToken", loginResult.Token);
                         ((Providers.CustomAuthStateProvider)_authStateProvider).NotifyAuthenticationStateChanged();
-                        return (true, "Login exitoso");
+                        return (true, "Successful Login");
                     }
                 }
 
                 var errorContent = await response.Content.ReadAsStringAsync();
-                _logger.LogWarning($"Login fallido: {errorContent}");
-                return (false, "Credenciales inválidas");
+                _logger.LogWarning($"Login Failed: {errorContent}");
+                return (false, "Invalid credentials");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error durante el login");
-                return (false, $"Error durante el login: {ex.Message}");
+                _logger.LogError(ex, "Error during Login");
+                return (false, $"Error during Login: {ex.Message}");
             }
         }
 
@@ -102,7 +101,7 @@ namespace ScheduleDay.Client.Services
 
                 _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                 var response = await _http.GetAsync("api/auth/state");
-                
+
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadFromJsonAsync<AuthState>();
@@ -112,7 +111,7 @@ namespace ScheduleDay.Client.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error verificando estado de autenticación");
+                _logger.LogError(ex, "Error verifying authentication state.");
                 return false;
             }
         }
@@ -141,7 +140,7 @@ namespace ScheduleDay.Client.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error obteniendo estado de autenticación");
+                _logger.LogError(ex, "Error obtaining authentication state.");
                 return null;
             }
         }
@@ -177,10 +176,10 @@ namespace ScheduleDay.Client.Services
             public string Message { get; set; } = string.Empty;
         }
 
-        public class AuthState //i changed this class to add the UserId property
+        public class AuthState
         {
             public bool IsAuthenticated { get; set; }
-            public string? UserId { get; set; } 
+            public string? UserId { get; set; }
             public string? Name { get; set; }
             public string? Email { get; set; }
         }

@@ -33,13 +33,12 @@ namespace ScheduleDay.Controllers
 
 			if (id != userId)
 			{
-				return Forbid(); // El usuario solo puede ver su propia información
+				return Forbid(); // The user will only see his own information
 			}
 
 			var user = await _context.Users.FindAsync(id);
 			if (user == null)
 			{
-				//???
 				return NotFound();
 			}
 			return user;
@@ -53,6 +52,7 @@ namespace ScheduleDay.Controllers
 
 			var provider = User.FindFirst("auth_provider")?.Value;
 
+			// We won't update google events for now, return forbid if the auth provider is Google.
 			if (id != userId || provider == "Google")
 			{
 				return Forbid();
@@ -64,6 +64,7 @@ namespace ScheduleDay.Controllers
 				return NotFound();
 			}
 
+			// Save user info
 			existingUser.Name = user.Name;
 			existingUser.Email = user.Email;
 			if (!string.IsNullOrEmpty(user.Password))

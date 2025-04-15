@@ -175,7 +175,7 @@ namespace ScheduleDay.Controllers
 
 		[HttpGet("externallogin")]
 		[AllowAnonymous]
-		public IActionResult ExternalLogin(string returnUrl = null)
+		public IActionResult ExternalLogin(string? returnUrl = null)
 		{
 			// Redirect to external login provider
 			var redirectUrl = Url.Action("googleCallback", "Auth", new { ReturnUrl = returnUrl });
@@ -185,7 +185,7 @@ namespace ScheduleDay.Controllers
 
 		[HttpGet("googlecallback")]
 		[AllowAnonymous]
-		public async Task<IActionResult> GoogleCallback(string returnUrl = null, string remoteError = null)
+		public async Task<IActionResult> GoogleCallback(string? returnUrl = null, string? remoteError = null)
 		{
 			if (!string.IsNullOrEmpty(remoteError))
 			{
@@ -241,7 +241,6 @@ namespace ScheduleDay.Controllers
 
 			// return Ok(new { token, userId = user.ID, name = user.Name, email = user.Email });
 			var redirectUrl = $"https://scheduledayapp-client-a7cqf2g2hncmeggs.canadacentral-01.azurewebsites.net/auth-complete?token={token}&email={Uri.EscapeDataString(user.Email)}&name={Uri.EscapeDataString(user.Name)}";
-			// var redirectUrl = $"https://localhost:5001/auth-complete?token={token}&email={Uri.EscapeDataString(user.Email)}&name={Uri.EscapeDataString(user.Name)}";
 
 			return Redirect(redirectUrl);
 

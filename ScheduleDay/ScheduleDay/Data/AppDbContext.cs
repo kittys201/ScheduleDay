@@ -27,14 +27,14 @@ namespace ScheduleDay.Data
                 new User
                 {
                     ID = 1,
-                    Name = "Usuario Admin",
+                    Name = "User Admin",
                     Email = "admin@demo.com",
                     Password = "$2b$12$WTVyWIrDLsk3NYn.BjlGTezKmiAuIwsIBqPTrBAtnm1ie/rV5eGnO" // Static hash for "Admin123"
                 },
                 new User
                 {
                     ID = 2,
-                    Name = "Usuario Demo",
+                    Name = "User Demo",
                     Email = "demo@demo.com",
                     Password = "$2b$12$vzx.bnx6QyIYtpRqlf2D6.ogzJ2FTwBweEeK9aLg.Hh3IPUiKDXci" // Static hash for "Demo123"
                 }
@@ -44,8 +44,8 @@ namespace ScheduleDay.Data
     new TaskItem
     {
         ID = 1,
-        Name = "Tarea 1",
-        Description = "Descripción de la tarea 1",
+        Name = "Task 1",
+        Description = "Task decription 1",
         Date = DateTime.SpecifyKind(new DateTime(2024, 2, 7), DateTimeKind.Utc), // Date in UTC format
         Status = "Pending",
         UserID = 1
@@ -53,8 +53,8 @@ namespace ScheduleDay.Data
     new TaskItem
     {
         ID = 2,
-        Name = "Tarea 2",
-        Description = "Descripción de la tarea 2",
+        Name = "Task 2",
+        Description = "Task decription 2",
         Date = DateTime.SpecifyKind(new DateTime(2024, 2, 7), DateTimeKind.Utc), // Date in UTC format
         Status = "Pending",
         UserID = 2

@@ -110,7 +110,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         try
-        {
+        { // Load user info
             user = await UserService.GetUserById(Id);
             if (user != null)
             {
@@ -137,8 +137,8 @@ else
             {
                 await UserService.UpdateUser(Id, user);
                 isUpdated = true;
-                StateHasChanged(); //forzar actualizacion.
-                await Task.Delay(2000); //le doy un tiempo para que el usuario vea el mensaje de exito.
+                StateHasChanged(); // Force update
+                await Task.Delay(2000); // Give time for the user to see the success message
                 Navigation.NavigateTo($"/user/settings/{Id}");
             }
         }

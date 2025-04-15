@@ -14,19 +14,19 @@
                     }
                     else
                     {
-                        <p>Lo siento, no tienes autorización para ver esta página.</p>
+                        <p>We apologize, you no authorization to view this page.</p>
                     }
                 </NotAuthorized>
                 <Authorizing>
-                    <div class="alert alert-info">Autorizando...</div>
+                    <div class="alert alert-info">Authorizing...</div>
                 </Authorizing>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
-            <PageTitle>No encontrado</PageTitle>
+            <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p>Lo sentimos, no hay nada en esta dirección.</p>
+                <p>We are sorry, there is nothing in this page.</p>
             </LayoutView>
         </NotFound>
     </Router>

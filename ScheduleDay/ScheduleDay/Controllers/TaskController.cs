@@ -44,7 +44,7 @@ namespace ScheduleDay.Controllers
 			if (provider == "Google")
 			{
 				var email = User.FindFirst(ClaimTypes.Email)?.Value;
-				_cache.TryGetValue($"google_token_{email}", out string accessToken);
+				_cache.TryGetValue($"google_token_{email}", out string? accessToken);
 
 				// Client
 				var httpClient = _httpClientFactory.CreateClient();
@@ -64,17 +64,20 @@ namespace ScheduleDay.Controllers
 
 					//Get only tasks from this month
 					var thisMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
-					taskItems = calendarResponse.Items
-					.Where(x => x.Start.EventDate > thisMonth)
-					.Select(item => new TaskItem
+					if (calendarResponse is not null)
 					{
-						Name = item.Summary ?? "Sin título",
-						Description = item.Description,
-						Date = item.Start?.DateTime ?? DateTime.UtcNow,
-						Status = "Imported",
-						UserID = userId,
-						GoogleEvent = true,
-					}).ToList();
+						taskItems = calendarResponse.Items
+							.Where(x => x.Start.EventDate > thisMonth)
+							.Select(item => new TaskItem
+							{
+								Name = item.Summary ?? "Sin título",
+								Description = item.Description,
+								Date = item.Start?.DateTime ?? DateTime.UtcNow,
+								Status = "Imported",
+								UserID = userId,
+								GoogleEvent = true,
+							}).ToList();
+					}
 				}
 			}
 
@@ -89,6 +92,7 @@ namespace ScheduleDay.Controllers
 			}
 			catch (Exception ex)
 			{
+				Console.WriteLine(ex.Message);
 			}
 
 			return taskItems;

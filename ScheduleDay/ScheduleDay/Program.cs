@@ -15,7 +15,7 @@ builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents()
 	.AddInteractiveWebAssemblyComponents();
 
-// Configuración JWT
+// JWT Config
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
 var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
@@ -25,11 +25,12 @@ if (jwtSettings == null)
 	throw new InvalidOperationException("JWT settings are not configured properly.");
 }
 
+// Authentication
 builder.Services.AddAuthentication(options =>
 {
 	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-	options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // need for google redirect
+	options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // needed for google redirect
 })
 
 .AddJwtBearer(options =>
@@ -46,16 +47,10 @@ builder.Services.AddAuthentication(options =>
 			Encoding.ASCII.GetBytes(jwtSettings.SecretKey))
 	};
 })
-// .AddCookie(options =>
-// {
-//     options.LoginPath = "/api/auth/externallogin"; 
-//     options.Cookie.SameSite = SameSiteMode.Lax;
-//     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-// }) 
 
 .AddCookie(options =>
 {
-	options.Cookie.SameSite = SameSiteMode.None; // 👈 importante para cross-site
+	options.Cookie.SameSite = SameSiteMode.None; // Important for cross-site
 	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 	options.LoginPath = "/api/auth/externallogin";
 })
@@ -63,21 +58,20 @@ builder.Services.AddAuthentication(options =>
 .AddGoogle(options =>
 {
 	var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
-	options.ClientId = googleAuthNSection["ClientId"];
-	options.ClientSecret = googleAuthNSection["ClientSecret"];
-	// options.CallbackPath = "/api/auth/googlecallback";
+	options.ClientId = googleAuthNSection["ClientId"] ?? "";
+	options.ClientSecret = googleAuthNSection["ClientSecret"] ?? "";
 	options.CallbackPath = "/signin-google"; // by default
 	options.Scope.Add("https://www.googleapis.com/auth/calendar.readonly");
 	options.SaveTokens = true;
 });
 
-
+// DBContext
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
 	options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"));
 });
 
-// Configuración de CORS mejorada
+// CORS Config
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AllowAll", policy =>
@@ -100,6 +94,7 @@ builder.Services.AddCors(options =>
 	});
 });
 
+// Controllers and services
 builder.Services.AddControllers()
 	.AddJsonOptions(options =>
 	{
@@ -113,6 +108,7 @@ builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
+// Middlewares
 if (app.Environment.IsDevelopment())
 {
 	app.UseDeveloperExceptionPage();
@@ -125,19 +121,6 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-// app.UseRouting();
-
-// app.UseCors("AllowAll");
-
-// app.UseCookiePolicy(new CookiePolicyOptions
-// {
-//     MinimumSameSitePolicy = SameSiteMode.Lax,
-//     HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
-//     Secure = CookieSecurePolicy.Always
-// });
-
-// app.UseAuthentication();
-// app.UseAuthorization();
 
 app.UseRouting();
 app.UseCors("AllowAll");

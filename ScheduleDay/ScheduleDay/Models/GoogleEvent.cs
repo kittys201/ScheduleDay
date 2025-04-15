@@ -4,10 +4,10 @@ namespace ScheduleDay.Models
 {
 	public class GoogleEvent
 	{
-		public string Id { get; set; }
-		public string Summary { get; set; }
-		public string Description { get; set; }
-		public GoogleEventDateTime Start { get; set; }
+		public required string Id { get; set; }
+		public string Summary { get; set; } = "";
+		public string Description { get; set; } = "";
+		public GoogleEventDateTime Start { get; set; } = new();
 	}
 
 	public class GoogleEventDateTime
@@ -20,7 +20,7 @@ namespace ScheduleDay.Models
 
 	public class GoogleCalendarResponse
 	{
-		public List<GoogleEvent> Items { get; set; }
+		public List<GoogleEvent> Items { get; set; } = [];
 	}
 
 }

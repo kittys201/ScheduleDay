@@ -51,7 +51,7 @@ namespace ScheduleDay.Client.Providers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error en autenticación: {ex.Message}");
+                _logger.LogError($"Authentication Error: {ex.Message}");
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
         }

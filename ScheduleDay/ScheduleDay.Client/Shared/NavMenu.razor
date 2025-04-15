@@ -10,7 +10,6 @@
         </button>
 
         <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-            @* <ul class="navbar-nav me-auto mb-2 mb-lg-0"> *@
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <AuthorizeView>
                     <Authorized>
@@ -76,7 +75,8 @@
     protected override async Task OnInitializedAsync()
     {
         UserColor = GetRandomColor();
-        // here I am calling the UpdateUserInformation method to get the user information
+
+        // Get the user information calling the UpdateUserInformation method
         await UpdateUserInformation();
     }
     private void ToggleNavMenu()
@@ -129,13 +129,13 @@
                 UserInitial = userName.Substring(0, 1).ToUpper();
 
                 var firstName = userName.Split(' ').FirstOrDefault();
-                if (firstName.Length > 15)
+                if (firstName is not null && firstName.Length > 15)
                 {
                     UserNameToDisplay = firstName.Substring(0, 12) + "...";
                 }
                 else
                 {
-                    UserNameToDisplay = firstName;
+                    UserNameToDisplay = firstName ?? "";
                 }
 
                 UserNameToDisplay = char.ToUpper(UserNameToDisplay[0]) + UserNameToDisplay.Substring(1).ToLower();

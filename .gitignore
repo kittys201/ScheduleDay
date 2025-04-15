@@ -21,7 +21,6 @@ obj/
 .vs/
 
 ## ASP.NET & Blazor specific
-# wwwroot/
 Properties/launchSettings.json
 
 ## NuGet packages

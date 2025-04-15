@@ -24,6 +24,7 @@ ScheduleDay is a full-stack task management application built with Blazor WebAss
 ## 📋 Getting Started
 
 ### Prerequisites
+
 - .NET 8.0 SDK
 - PostgreSQL database
 - Visual Studio 2022 or Visual Studio Code
@@ -31,16 +32,19 @@ ScheduleDay is a full-stack task management application built with Blazor WebAss
 ### Installation
 
 1. Clone the repository
+
    ```
    git clone https://github.com/kittys201/ScheduleDay.git
    ```
 
 2. Navigate to the project directory
+
    ```
    cd ScheduleDay
    ```
 
 3. Configure the database connection in `appsettings.json`
+
    ```json
    "ConnectionStrings": {
      "PostgresConnection": "YOUR_CONNECTION_STRING"
@@ -48,6 +52,7 @@ ScheduleDay is a full-stack task management application built with Blazor WebAss
    ```
 
 4. Update JWT settings in `appsettings.json`
+
    ```json
    "JwtSettings": {
      "SecretKey": "YOUR_SECRET_KEY_AT_LEAST_32_CHARS",
@@ -58,6 +63,7 @@ ScheduleDay is a full-stack task management application built with Blazor WebAss
    ```
 
 5. Run database migrations
+
    ```
    dotnet ef database update
    ```
@@ -70,6 +76,7 @@ ScheduleDay is a full-stack task management application built with Blazor WebAss
 ## 🧪 Testing
 
 To run tests:
+
 ```
 dotnet test
 ```
@@ -77,17 +84,20 @@ dotnet test
 ## 📱 User Guide
 
 ### Account Creation
+
 1. Navigate to the homepage
 2. Click "Register" to create a new account
 3. Fill in your name, email, and password
 4. Click "Register" to create your account
 
 ### Logging In
+
 1. Enter your email and password
 2. Optionally check "Keep me signed in"
 3. Click "Login"
 
 ### Managing Tasks
+
 - **Create Task**: Click "New Task" and fill in the details
 - **View Tasks**: Select a task and click the eye icon
 - **Edit Tasks**: Select a task and click the pencil icon
@@ -115,6 +125,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Contributors
 
-- Agustin Aguilar 
-- Fernando Gonzalez 
-- Jennifer Cristina Gonzalez 
+- Agustin Aguilar
+- Fernando Gonzalez
+- Jennifer Cristina Gonzalez

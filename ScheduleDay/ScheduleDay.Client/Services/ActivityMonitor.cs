@@ -37,7 +37,7 @@ namespace ScheduleDay.Client.Services
             if (authState.User.Identity?.IsAuthenticated == true)
             {
                 var timeSinceLastActivity = DateTime.Now - _lastActivity;
-                if (timeSinceLastActivity.TotalMinutes >= 14) // Refrescar antes de que expire (15 min)
+                if (timeSinceLastActivity.TotalMinutes >= 14) // Refresh before expiration (15 min)
                 {
                     try
                     {
@@ -88,13 +88,13 @@ namespace ScheduleDay.Client.Services
             }
         }
 
-        // Método público para verificar si la sesión está activa
+        // Check if session is Active.
         public bool IsSessionActive()
         {
             return (DateTime.Now - _lastActivity).TotalMinutes < 15;
         }
 
-        // Método para reiniciar el temporizador manualmente
+        // Reset timer manually
         public void ResetTimer()
         {
             if (!_isDisposed)

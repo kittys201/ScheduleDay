@@ -21,21 +21,21 @@ builder.Services.AddScoped<TaskService>();
 builder.Services.AddScoped<UserService>();
 
 
-// Configuración de HttpClient con interceptor JWT
+// Configure HttpClient with JWT interceptor
 builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
 
-// Configuración del HttpClient con la URL base correcta
-var baseAddress = builder.HostEnvironment.IsProduction() 
+// Configure HttpClient with correct URL base
+var baseAddress = builder.HostEnvironment.IsProduction()
     ? "https://scheduledayapp-api-avc2a0acabeadth4.canadacentral-01.azurewebsites.net"
     : "https://localhost:7073/";
 
-builder.Services.AddHttpClient("API", client => 
+builder.Services.AddHttpClient("API", client =>
 {
     client.BaseAddress = new Uri(baseAddress);
 })
 .AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
-// HttpClient por defecto
+// HttpClient by default
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
     .CreateClient("API"));
 

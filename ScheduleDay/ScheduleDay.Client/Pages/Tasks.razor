@@ -309,8 +309,11 @@
         ActivityMonitor.UpdateActivity();
 
         TaskItem? currentTask = await TaskService.GetTaskById(id);
-        currentTask.Status = "Completed";
-        await TaskService.UpdateTask(currentTask);
+        if(currentTask is not null)
+        {
+            currentTask.Status = "Completed";
+            await TaskService.UpdateTask(currentTask);
+        }
 
         selectedTaskId = null;
         await LoadTasks();
