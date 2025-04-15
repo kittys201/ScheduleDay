@@ -68,22 +68,42 @@ ScheduleDay is a full-stack task management application built with Blazor WebAss
    dotnet ef database update
    ```
 
-6. Run the application
+6. Run the server
+
+   1. Go to ScheduleDay/ScheduleDay:
+
+   ```
+   cd ScheduleDay
+   cd ScheduleDay
+   ```
+
+   2. If it is the first time running the project, we recommend the following commands:
+
+   ```
+   dotnet clean
+   dotnet restore
+   dotnet build
+   ```
+
+   3. Finally, run the project:
+
    ```
    dotnet run
    ```
 
-## 🧪 Testing
-
-To run tests:
-
-```
-dotnet test
-```
+7. Run the client
+   1. Go to ScheduleDay/ScheduleDay.Client:
+   ```
+   cd ScheduleDay
+   cd ScheduleDay.Client
+   ```
+   2. Follow steps 6.2 and 6.3.
 
 ## 📱 User Guide
 
 ### Account Creation
+
+This is not required if you will login with your Google Account.
 
 1. Navigate to the homepage
 2. Click "Register" to create a new account
@@ -92,7 +112,7 @@ dotnet test
 
 ### Logging In
 
-1. Enter your email and password
+1. Signin with Google or enter your email and password
 2. Optionally check "Keep me signed in"
 3. Click "Login"
 
