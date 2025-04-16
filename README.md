@@ -135,9 +135,9 @@ This is not required if you will login with your Google Account.
 
 ## 🚢 Deployment
 
-This application is deployed using Azure App Services. The server side and client side were deployed separately. You may access the web application at this URL: [Server Frontend] (https://scheduledayapp-client-a7cqf2g2hncmeggs.canadacentral-01.azurewebsites.net/)
+This application is deployed using Azure App Services. The server side and client side were deployed separately. You may access the web application at this URL: [Server Frontend](https://scheduledayapp-client-a7cqf2g2hncmeggs.canadacentral-01.azurewebsites.net/)
 
-Video demonstration (YouTube):[🎥 Video Demo] (https://www.youtube.com/watch?v=Qo2TztrTxsY)
+Video demonstration (YouTube):[🎥 Video Demo](https://www.youtube.com/watch?v=Qo2TztrTxsY)
 
 ## 📷  ScreenShot
 <img src="https://github.com/kittys201/ScheduleDay/blob/main/Screenshots/Captura1.png?raw=true" alt="im" >
