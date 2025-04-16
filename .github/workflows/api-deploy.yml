@@ -33,7 +33,7 @@ jobs:
     - name: Deploy to Azure Web App (API)
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'scheduledayapp-api'  # Nombre de tu App Service para API
+        app-name: 'scheduledayapp-api'  # Name of your App Service for API
         slot-name: 'production'
         publish-profile: ${{ secrets.AZURE_WEBAPP_API_PUBLISH_PROFILE }}
         package: ${{github.workspace}}/publish-api

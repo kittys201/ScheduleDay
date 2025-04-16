@@ -24,7 +24,7 @@ builder.Services.AddScoped<UserService>();
 // Configure HttpClient with JWT interceptor
 builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
 
-// Configure HttpClient with correct URL base
+// Configure HttpClient with correct URL base, It is important to mention that every time you create a virtual machine you must change the base URL and so that they can work locally, keep localhost
 var baseAddress = builder.HostEnvironment.IsProduction()
     ? "https://scheduledayapp-api-avc2a0acabeadth4.canadacentral-01.azurewebsites.net"
     : "https://localhost:7073/";

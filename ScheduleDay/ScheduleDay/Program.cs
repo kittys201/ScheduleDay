@@ -71,7 +71,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"));
 });
 
-// CORS Config
+// CORS Config, Some cores can be removed and correspond to the frontend. It is very important not to forget to update this without changing the URL.
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AllowAll", policy =>
